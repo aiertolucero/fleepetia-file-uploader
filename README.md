@@ -1,2 +1,3 @@
 # fleepetia-file-uploader
-This is a multiple file uploader using Laravel and Masonry grid
+Multiple file uploader using Masonry grid, blueimp Gallery and Laravel. 
+
