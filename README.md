@@ -1,9 +1,9 @@
 # fleepetia-image-uploader
 Multiple image-uploader using Laravel, Masonry grid, and Jquery.
-###### Includes the following implementation
-- database migration (just run php artisan migrate)
+###### Includes the following implementation :
+- database migration
 - image storing, database insertion, hashed filenames
-- image compression via front-end resizing (preserving the aspect ratio of the)
+- image compression via front-end image resizing (preserving the aspect ratio of the)
 - progressive image uploading
 - masonry grid
 - blueimp gallery
