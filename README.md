@@ -2,6 +2,8 @@
 Multiple image-uploader using Laravel, Masonry grid, and Jquery.
 
 Used in [Fleepetia](https://fleepetia.com)
+
+See live example here [http://projects.aiertolucero.com/fleepetiaFileUploader](http://projects.aiertolucero.com/fleepetiaFileUploader)
 ###### Includes the following implementation :
 - database migration
 - image storing, database insertion, hashed filenames
