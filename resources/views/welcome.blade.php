@@ -32,7 +32,7 @@
                     </div>
                 </form>
 
-                <div class="row">
+                <div class="row mrg-b-t">
                     <div class="col-xs-12 text-center">
                         <div class="grid" id="grid">
                             <div class="grid-sizer"></div>
@@ -47,6 +47,7 @@
                         </div>
                     </div>
                 </div>
+                <hr>
 
                 <!-- Gallery Controls -->
                <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-start-slideshow="true" data-filter=":even">
