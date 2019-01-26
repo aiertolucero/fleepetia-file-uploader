@@ -23,10 +23,17 @@
                     Fleepetia Image Uploader
                 </div>
                 <form>
+                    <!-- For POST csrf token -->
                     <input type="hidden" name="_token" id="uploadToken" value="{{ csrf_token() }}">
+
                     <div class="upload-btn-wrapper">
                       <div class="btn-progress-all"></div>  
-                      <button class="btn btn-fileupload">Upload images <i class="fa fa-upload upload-icon" aria-hidden="true"></i> <i class="fa fa-circle-o-notch fa-spin uploading-icon hide" aria-hidden="true"></i></button>
+
+                      <button class="btn btn-fileupload">Upload images 
+                        <!-- Add this icons form uploading spinners-->
+                        <i class="fa fa-upload upload-icon" aria-hidden="true"></i> 
+                        <i class="fa fa-circle-o-notch fa-spin uploading-icon hide" aria-hidden="true"></i>
+                      </button>
                       <input type="hidden" name="blurImage" id="blurImage" value="" >
                       <input type="file" name="mainImage" id="fileupload"  data-url="/upload" multiple />
                     </div>
@@ -69,9 +76,19 @@
         <script src="{{ URL::asset('vendor/jquery/jquery-blueimp-gallery.min.js')}}"></script>
         <script src="{{ URL::asset('vendor/masonry/masonry.pkgd.min.js') }}"></script>
         <script src="{{ URL::asset('vendor/masonry/imageLoaded.js') }}"></script>
-        <script type="text/javascript">
-          var appUrl = "{{ App::make('url')->to('/photos') }}"
-        </script>
+
         <script src="{{ URL::asset('js/fleepetia-file-uploader.js') }}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var fpOptions = {
+                                    uploadPath : "{{ App::make('url')->to('/photos') }}",
+                                    csrfToken : $('#uploadToken').val(),
+                                    gridId : '#grid',
+                                    gridItemClass : '.grid-item',
+                                    fileUploaderId : '#fileupload'
+                                }
+                initUploader(fpOptions);
+            });
+        </script>
     </body>
 </html>

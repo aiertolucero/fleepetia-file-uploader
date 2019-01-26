@@ -1,108 +1,113 @@
-$(function () {
-    $.fn.masonryImagesReveal = function( $items ) {
-      var msnry = this.data('masonry');
-      var itemSelector = msnry.options.itemSelector;
-      $items.hide();
-      this.append( $items );
+var totalPhotos = 0;
+var totalPhotosUploaded = 0;
+var carouselLinks = [];
+var uploadPath = '';
+var csrfToken = '';
+var container= '';
 
-      $items.imagesLoaded().progress( function( imgLoad, image ) {
-        var $item = $( image.img ).parents( itemSelector );
-        $item.show();
-        msnry.appended( $item );
+$.fn.masonryImagesReveal = function( $items ) {
+  var msnry = this.data('masonry');
+  var itemSelector = msnry.options.itemSelector;
+  $items.hide();
+  this.append( $items );
+
+  $items.imagesLoaded().progress( function( imgLoad, image ) {
+    var $item = $( image.img ).parents( itemSelector );
+    $item.show();
+    msnry.appended( $item );
+  });
+
+  return this;
+};
+
+$.fn.masonryNewPhoto = function( $items ) {
+  var msnry = this.data('masonry');
+  var itemSelector = msnry.options.itemSelector;
+  $items.imagesLoaded().progress( function( imgLoad, image ) {
+    var $item = $( image.img ).parents( itemSelector );
+    $(image.img).removeClass('vis-hidden');
+    $(image.img).parent('a').removeClass('h-200');
+    container.masonry();
+  });
+  return this;
+};
+
+function resizeBlurImage(canvas,image){
+  max_blur_height = 20,
+  max_blur_width = 35,
+  width = image.width,
+  height = image.height;
+
+  if (width > height) {
+    if (width > max_blur_width) {
+      height *= max_blur_width / width;
+      width = max_blur_width;
+    }
+  } else {
+    if (height > max_blur_height) {
+      width *= max_blur_height / height;
+      height = max_blur_height;
+    }
+  }
+
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+  return canvas;
+}
+
+function resizeMainImage(canvas,image){
+  max_blur_height = 608,
+  max_blur_width = 1080,
+  width = image.width,
+  height = image.height;
+
+  if (width > height) {
+    if (width > max_blur_width) {
+      height *= max_blur_width / width;
+      width = max_blur_width;
+    }
+  } else {
+    if (height > max_blur_height) {
+      width *= max_blur_height / height;
+      height = max_blur_height;
+    }
+  }
+
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+  return canvas;
+}
+
+function toggleIcons(){
+    $('.uploading-icon').toggleClass('hide');
+    $('.upload-icon').toggleClass('hide');
+}
+
+function initGridContainer(gridId,gridItemClass){
+  container = $(gridId).masonry({
+    itemSelector: gridItemClass,
+    gutter: 2,
+    fitWidth: true,
+    horizontalOrder: true
+  });
+  container.masonryImagesReveal(container.find('.item'));
+  container.imagesLoaded()
+    .done( function( instance ) {
+      container.masonry({
+        itemSelector: '.grid-item',
+        gutter: 2,
+        fitWidth: true,
+        horizontalOrder: true
       });
+      container.masonry();
+  }); 
+  return container;
+}
 
-      return this;
-    };
-
-    $.fn.masonryNewPhoto = function( $items ) {
-      var msnry = this.data('masonry');
-      var itemSelector = msnry.options.itemSelector;
-      $items.imagesLoaded().progress( function( imgLoad, image ) {
-        var $item = $( image.img ).parents( itemSelector );
-        $(image.img).removeClass('vis-hidden');
-        $(image.img).parent('a').removeClass('h-200');
-        container.masonry();
-      });
-      return this;
-    };
-
-    var uploadPath = appUrl;
-    var totalPhotos = 0;
-    var totalPhotosUploaded = 0;
-    var carouselLinks = [];
-    var container = $('#grid').masonry({
-          itemSelector: '.grid-item',
-          gutter: 2,
-          fitWidth: true,
-          horizontalOrder: true
-        });
-        container.masonryImagesReveal(container.find('.item'));
-        container.imagesLoaded()
-          .done( function( instance ) {
-            container.masonry({
-              itemSelector: '.grid-item',
-              gutter: 2,
-              fitWidth: true,
-              horizontalOrder: true
-            });
-            container.masonry();
-          }); 
-
-    function toggleIcons(){
-        $('.uploading-icon').toggleClass('hide');
-        $('.upload-icon').toggleClass('hide');
-    }
-
-    function resizeMainImage(canvas,image){
-      max_blur_height = 608,
-      max_blur_width = 1080,
-      width = image.width,
-      height = image.height;
-
-      if (width > height) {
-        if (width > max_blur_width) {
-          height *= max_blur_width / width;
-          width = max_blur_width;
-        }
-      } else {
-        if (height > max_blur_height) {
-          width *= max_blur_height / height;
-          height = max_blur_height;
-        }
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-      canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-      return canvas;
-    }
-
-
-    function resizeBlurImage(canvas,image){
-      max_blur_height = 20,
-      max_blur_width = 35,
-      width = image.width,
-      height = image.height;
-
-      if (width > height) {
-        if (width > max_blur_width) {
-          height *= max_blur_width / width;
-          width = max_blur_width;
-        }
-      } else {
-        if (height > max_blur_height) {
-          width *= max_blur_height / height;
-          height = max_blur_height;
-        }
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-      canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-      return canvas;
-    }
-
-    $('#fileupload').fileupload({
+function initFileUploader(fileUploaderId){
+  $(fileUploaderId).fileupload({
         dataType: 'json',
         add: function (e, data) {
             if(data.files && data.files[0]){
@@ -130,12 +135,11 @@ $(function () {
                 var reader = new FileReader();
                 var formData = new FormData();
 
-                formData.append("_token", $('#uploadToken').val());
+                formData.append("_token", csrfToken);
 
                 reader.onload = function (readerEvent) {
                     var image = new Image();
                     image.onload = function (imageEvent) {
-
                           // Resize the image
                           var canvasMainImage = document.createElement('canvas');
                           var canvasBlurImage = document.createElement('canvas');
@@ -234,12 +238,12 @@ $(function () {
             $(data.gallery[0]).addClass('item-primary');
             $(data.gallery[0]).append('<i class="fa fa-star fa-primary-photo" aria-hidden="true"></i>');
           }
-
         }
-    });
+  });
+}
 
-  
-  $(document).off('click','.item-gallery').on('click','.item-gallery', function(event){
+function initGallery(galleryClass,gridItemClass){
+  $(document).off('click',galleryClass).on('click',galleryClass, function(event){
       event = event || window.event;
       var target = event.target || event.srcElement,
           link = target.src ? target.parentNode : target,
@@ -247,8 +251,16 @@ $(function () {
               index: link,
               event: event
           },
-          links = $('.grid-item');
+          links = $(gridItemClass);
       blueimp.Gallery(links, options);
   });
+}
 
-});
+function initUploader(args){
+  uploadPath = args.uploadPath;
+  csrfToken = args.csrfToken;
+  initGridContainer(args.gridId,args.gridItemClassd);
+  initFileUploader(args.fileUploaderId);
+  initGallery(args.gridId,args.gridItemClassd);
+}
+
