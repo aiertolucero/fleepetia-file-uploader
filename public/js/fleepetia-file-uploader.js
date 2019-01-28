@@ -2,6 +2,7 @@ var totalPhotos = 0;
 var totalPhotosUploaded = 0;
 var carouselLinks = [];
 var uploadPath = '';
+var uploadBlurPath = '';
 var csrfToken = '';
 var container= '';
 
@@ -258,6 +259,7 @@ function initGallery(galleryClass,gridItemClass){
 
 function initUploader(args){
   uploadPath = args.uploadPath;
+  uploadBlurPath = args.uploadBlurPath;
   csrfToken = args.csrfToken;
   initGridContainer(args.gridId,args.gridItemClassd);
   initFileUploader(args.fileUploaderId);

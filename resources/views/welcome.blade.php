@@ -82,6 +82,7 @@
             $(document).ready(function() {
                 var fpOptions = {
                                     uploadPath : "{{ App::make('url')->to('/photos') }}",
+                                    uploadBlurPath : '/blur/',
                                     csrfToken : $('#uploadToken').val(),
                                     gridId : '#grid',
                                     gridItemClass : '.grid-item',
